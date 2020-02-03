@@ -1,12 +1,29 @@
 from flask import Flask ,render_template
 from data import Articles
+from flask_mysqldb import MySQL
+import pymysql
 
-app = Flask(__name__)   #port 자동 지정=>5000port
-
+app = Flask(__name__)   #port 자동 지정으로 실행=>5000port
 app.debug = True
 
 Articles=Articles()
 print(Articles)
+
+db = pymysql.connect(host='127.0.0.1', port=3306, user='root', passwd='1234', db='myflaskapp', charset='utf8')
+cursor = db.cursor()
+
+cursor = db.cursor()
+
+data1 = cursor.execute('INSERT INTO users(name,email,username,password) VALUES("kim","1@naver.com","modu","1234")')
+print(data1)
+# app.config['MySQL_HOST']='localhost'
+# app.config['MySQL_USER']='root'
+# app.config['MySQL_PASSWORD']='1234'
+# app.config['MySQL_DB']='myflaskapp'
+# app.config['MySQL_CURSORCLASS']='DictCursor'
+
+# mysql=MySQL(app)
+# cur = mysql.com
 
 @app.route('/') # @=decorate, flask 안에 route라는 method존재 => 경로를 따라 실행 시킴
 def hello():
@@ -23,6 +40,10 @@ def about():
 @app.route('/articles')
 def articles():
     return render_template('articles.html', articles=Articles)
+
+@app.route('/article/<string:id>')
+def article(id):
+    return render_template('article.html', id=int(id), articles=Articles)
 
 if __name__=='__main__':
     app.run(debug=True)
